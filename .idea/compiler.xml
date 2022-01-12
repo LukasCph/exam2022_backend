@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="exam2022_backend" />
         <module name="startcode_security_backend" />
         <module name="startcode_security" />
         <module name="security-start" />
@@ -16,6 +17,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Backend_Startcode" options="-endorseddirs &quot;C:\Users\Alek\Dropbox\Dev\3.sem\Final Startcode\Backend_Startcode\target/endorsed&quot;" />
+      <module name="exam2022_backend" options="-endorseddirs C:\Users\Lukas\OneDrive\Documents\Sem3\exam2022\exam2022_backend\target/endorsed" />
       <module name="security-start" options="-endorseddirs C:\Users\Alek\Dropbox\Dev\3.sem\startcode_secured\target/endorsed" />
       <module name="startcode_security" options="-endorseddirs &quot;D:\3. Semester\BackEndStartCode\startcode_security\target/endorsed&quot;" />
       <module name="startcode_security_backend" options="-endorseddirs C:\Users\olive\Documents\GitHub\startcode_security_backend\target/endorsed" />
