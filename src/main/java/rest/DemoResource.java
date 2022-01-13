@@ -148,5 +148,26 @@ public class DemoResource {
         }
     }
 
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("removeassistant/{name}")
+    public String removeAssistant(@PathParam("name") String assistantName){
+        WashingAssistantDTO assistantResponseDTO = null;
 
+        if (assistantName != null ){
+            try {
+                assistantResponseDTO = ASSISTANTFACADE.removeWashingAssistant(assistantName);
+            } catch (Exception e) {
+                throw new NotFoundException("Assistant could not be removed");
+            }
+        } else {
+                throw new NotFoundException("Assistant not found");
+               }
+            if (assistantResponseDTO != null ) {
+                return GSON.toJson(assistantResponseDTO);
+            } else {
+                throw new NotFoundException("Assistant could not be removed");
+            }
+        }
 }

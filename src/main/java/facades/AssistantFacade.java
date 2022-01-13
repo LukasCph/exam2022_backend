@@ -67,4 +67,19 @@ public class AssistantFacade {
         }
         return new WashingAssistantDTO(assistant);
     }
+
+    public WashingAssistantDTO removeWashingAssistant(String assistantName) {
+        EntityManager em = emf.createEntityManager();
+        WashingAssistant assistantToRemove;
+
+        try {
+            em.getTransaction().begin();
+            assistantToRemove = em.find(WashingAssistant.class,assistantName);
+            em.remove(assistantToRemove);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new WashingAssistantDTO(assistantToRemove);
+    }
 }
