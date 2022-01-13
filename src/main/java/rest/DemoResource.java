@@ -1,5 +1,6 @@
 package rest;
 
+import DTO.WashingAssistantDTO.WashingAssistantDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import entities.User;
@@ -10,6 +11,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -18,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 
+import facades.AssistantFacade;
 import facades.FacadeExample;
 import utils.EMF_Creator;
 
@@ -25,6 +28,7 @@ import utils.EMF_Creator;
 public class DemoResource {
     
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
+    private static final AssistantFacade ASSISTANTFACADE = AssistantFacade.getAssistantFacade(EMF);
     @Context
     private UriInfo context;
     private Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -71,6 +75,23 @@ public class DemoResource {
     public String getFromAdmin() {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("allAssistants")
+    public String fetchAllAssistants(){
+        List<WashingAssistantDTO> assistantDTO = null;
+        try {
+            assistantDTO = ASSISTANTFACADE.getAllAssistants();
+        } catch (Exception e) {
+            throw new NotFoundException("Error fetching all assistants");
+        }
+        if (assistantDTO != null & !assistantDTO.isEmpty()) {
+            return GSON.toJson(assistantDTO);
+        } else {
+            throw new NotFoundException("Error fetching all assistants");
+        }
     }
 
 }

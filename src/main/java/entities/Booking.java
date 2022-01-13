@@ -11,9 +11,12 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookingId")
     private int bookingId;
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "bookingDate")
     private Date bookingDate;
+    @Column(name = "duration")
     private int duration;
 
 

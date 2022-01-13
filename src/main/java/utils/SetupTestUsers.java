@@ -6,6 +6,7 @@ import entities.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.awt.print.Book;
+import java.util.Calendar;
 import java.util.Date;
 
 public class SetupTestUsers {
@@ -23,6 +24,8 @@ public class SetupTestUsers {
     // CHANGE the three passwords below, before you uncomment and execute the code below
     // Also, either delete this file, when users are created or rename and add to .gitignore
     // Whatever you do DO NOT COMMIT and PUSH with the real passwords
+
+    //Calender cal = Calendar.getInstance();
 
     User user = new User("user", "kode123");
     User admin = new User("admin", "kode123");
