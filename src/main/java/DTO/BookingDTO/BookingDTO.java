@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BookingDTO {
 
-    private Date bookingDate;
+    private String bookingDate;
     private int duration;
     private List<WashingAssistantDTO> washers = new ArrayList<>();
     private CarDTO car;
@@ -22,13 +22,14 @@ public class BookingDTO {
         this.duration = booking.getDuration();
     }
 
+    public BookingDTO() {
+    }
 
-
-    public Date getBookingDate() {
+    public String getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate(Date bookingDate) {
+    public void setBookingDate(String bookingDate) {
         this.bookingDate = bookingDate;
     }
 

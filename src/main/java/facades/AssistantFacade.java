@@ -1,12 +1,15 @@
 package facades;
 
+import DTO.BookingDTO.BookingDTO;
 import DTO.WashingAssistantDTO.WashingAssistantDTO;
 import com.google.gson.Gson;
+import entities.Booking;
 import entities.WashingAssistant;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.NotFoundException;
 import java.lang.annotation.Native;
 import java.util.List;
 
@@ -82,4 +85,30 @@ public class AssistantFacade {
         }
         return new WashingAssistantDTO(assistantToRemove);
     }
+
+    public String addAssistant(int id,String washerName) {
+        EntityManager em = emf.createEntityManager();
+        Booking bookingToEdit  = null;
+        WashingAssistant assistantToAdd = null;
+        bookingToEdit = em.find(Booking.class,id);
+
+        assistantToAdd = em.find(WashingAssistant.class,washerName);
+        assistantToAdd.addBookings(bookingToEdit);
+
+        try {
+            em.getTransaction().begin();
+            em.persist(assistantToAdd);
+            em.merge(bookingToEdit);
+            em.persist(bookingToEdit);
+            em.getTransaction().commit();
+            } catch (Exception e){
+            throw new NotFoundException("Persist failed");
+        } finally {
+            em.close();
+        }
+        System.out.println(bookingToEdit.getWashers());
+        return "Assistant: "+assistantToAdd+" has been added to the booking";
+    }
+
+
 }

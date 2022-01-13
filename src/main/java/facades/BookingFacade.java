@@ -35,22 +35,13 @@ public class BookingFacade {
     }
 
 
-    public BookingDTO createBooking(BookingDTO bookingDTO, CarDTO carDTO, String name) {
+    public BookingDTO createBooking(BookingDTO bookingDTO) {
         EntityManager em = emf.createEntityManager();
 
         Booking booking = null;
-        Car car = null;
-
         try {
             em.getTransaction().begin();
-            car  = new Car(carDTO.getRegistration(),car.getBrand(),car.getMake(),car.getYear());
-            booking = new Booking(bookingDTO.getBookingDate(), booking.getDuration());
-            car.addBookings(booking);
-
-            booking.addWasher(
-                    em.find(WashingAssistant.class, name)
-            );
-            em.persist(car);
+            booking = new Booking(bookingDTO.getBookingDate(), bookingDTO.getDuration());
             em.persist(booking);
             em.getTransaction().commit();
         } finally {
@@ -58,4 +49,7 @@ public class BookingFacade {
         }
         return new BookingDTO(booking);
     }
+
+
+
 }

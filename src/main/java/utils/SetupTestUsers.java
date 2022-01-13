@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import java.awt.print.Book;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class SetupTestUsers {
 
@@ -25,14 +26,16 @@ public class SetupTestUsers {
     // Also, either delete this file, when users are created or rename and add to .gitignore
     // Whatever you do DO NOT COMMIT and PUSH with the real passwords
 
-    //Calender cal = Calendar.getInstance();
+    Calendar cal = Calendar.getInstance();
+    cal.set(2022,01,12);
+    cal.setTimeZone(TimeZone.getTimeZone("CET"));
 
     User user = new User("user", "kode123");
     User admin = new User("admin", "kode123");
     User both = new User("user_admin", "kode123");
     Car bil1 = new Car("AE23513","Fiat","Punto","1996");
-    Date dato1 = new Date(2014-05-30);
-    Booking book1 = new Booking(dato1,30);
+    cal.set(2022,01,20,12,30);
+    Booking book1 = new Booking("25/01/2022",30);
     WashingAssistant wash1 = new WashingAssistant("Morten","Dansk",4,50);
 
 
@@ -50,6 +53,7 @@ public class SetupTestUsers {
     bil1.addBookings(book1);
     book1.addWasher(wash1);
     wash1.addBookings(book1);
+    user.setCar(bil1);
 
     em.persist(bil1);
     em.persist(book1);

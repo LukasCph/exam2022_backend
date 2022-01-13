@@ -13,9 +13,9 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookingId")
     private int bookingId;
-    @Temporal(TemporalType.TIMESTAMP)
+    //@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "bookingDate")
-    private Date bookingDate;
+    private String bookingDate;
     @Column(name = "duration")
     private int duration;
 
@@ -26,9 +26,17 @@ public class Booking {
     @ManyToOne(cascade = {CascadeType.PERSIST})
     private Car car;
 
-    public Booking(Date bookingDate, int duration) {
+    public Booking(String bookingDate, int duration) {
         this.bookingDate = bookingDate;
         this.duration = duration;
+    }
+
+    public String getBookingDate() {
+        return bookingDate;
+    }
+
+    public void setBookingDate(String bookingDate) {
+        this.bookingDate = bookingDate;
     }
 
     public Booking() {
@@ -44,14 +52,6 @@ public class Booking {
 
     public void setBookingId(int bookingId) {
         this.bookingId = bookingId;
-    }
-
-    public Date getBookingDate() {
-        return bookingDate;
-    }
-
-    public void setBookingDate(Date bookingDate) {
-        this.bookingDate = bookingDate;
     }
 
     public int getDuration() {

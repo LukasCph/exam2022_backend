@@ -20,6 +20,9 @@ public class Car {
     @Column (name = "year")
     private String year;
 
+    @OneToOne(mappedBy = "car")
+    private User user;
+
     @OneToMany(mappedBy = "car", cascade = {CascadeType.PERSIST})
     private List<Booking> bookings = new ArrayList<>();
 
@@ -29,6 +32,7 @@ public class Car {
         this.make = make;
         this.year = year;
         this.bookings = bookings;
+        this.user = user;
     }
 
     public Car() {
@@ -39,6 +43,14 @@ public class Car {
         if (booking != null) {
             booking.setCar(this);
         }
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getRegistration() {

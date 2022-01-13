@@ -5,6 +5,8 @@ import DTO.CarDTO.CarDTO;
 import DTO.WashingAssistantDTO.WashingAssistantDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import entities.User;
 
 import java.util.List;
@@ -95,22 +97,19 @@ public class DemoResource {
         }
     }
 
-/*
-    DOES NOT WORK
+
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("book/{name}")
-    public String makeNewBooking(@PathParam("name") String name, BookingDTO bookingDTO, CarDTO carDTO) {
-
-
+    @Path("book")
+    public String makeNewBooking(BookingDTO bookingDTO) {
         BookingDTO bookingResponseDTO = null;
 
         if (bookingDTO != null) {
             try {
-                bookingResponseDTO = BOOKINGFACADE.createBooking(bookingDTO, carDTO, name);
+                bookingResponseDTO = BOOKINGFACADE.createBooking(bookingDTO);
             } catch (Exception e) {
-                throw new NotFoundException("Booking could not be made");
+                throw new NotFoundException("Booking failed");
             }
         } else {
             throw new NotFoundException("Missing booking info");
@@ -121,8 +120,29 @@ public class DemoResource {
         }
         throw new NotFoundException("Booking could not be made");
     }
-    /*
- */
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("booking/{id}")
+    public String addAssistantToBooking(@PathParam("id") int id, String jsonString) {
+
+        JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
+        String washerName = json.get("washerName").getAsString();
+        System.out.println(washerName);
+        System.out.println(id);
+
+        if (id != 0) {
+            try {
+                ASSISTANTFACADE.addAssistant(id,washerName);
+            } catch (Exception e) {
+                throw new NotFoundException("Missing booking info");
+            }
+        } else {
+            throw new NotFoundException("Failed to add assistant");
+        }
+        return "Assistant: "+ washerName +" has been added to the booking";
+    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -168,6 +188,6 @@ public class DemoResource {
                 return GSON.toJson(assistantResponseDTO);
             } else {
                 throw new NotFoundException("Assistant could not be removed");
-            }
         }
+    }
 }
