@@ -109,6 +109,4 @@ public class AssistantFacade {
         System.out.println(bookingToEdit.getWashers());
         return "Assistant: "+assistantToAdd+" has been added to the booking";
     }
-
-
 }

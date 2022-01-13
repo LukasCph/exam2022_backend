@@ -49,7 +49,4 @@ public class BookingFacade {
         }
         return new BookingDTO(booking);
     }
-
-
-
 }

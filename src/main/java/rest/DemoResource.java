@@ -23,6 +23,7 @@ import javax.ws.rs.core.SecurityContext;
 
 import facades.AssistantFacade;
 import facades.BookingFacade;
+import facades.CarFacade;
 import utils.EMF_Creator;
 
 @Path("cw")
@@ -31,6 +32,7 @@ public class DemoResource {
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final AssistantFacade ASSISTANTFACADE = AssistantFacade.getAssistantFacade(EMF);
     private static final BookingFacade BOOKINGFACADE = BookingFacade.getBookingFacade(EMF);
+    private static final CarFacade CARFACADE = CarFacade.getCarFacade(EMF);
 
     @Context
     private UriInfo context;
@@ -147,6 +149,7 @@ public class DemoResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     @Path("newassistant")
     public String createAssistant(WashingAssistantDTO washingAssistantDTO) {
         WashingAssistantDTO assistantResponseDTO = null;
@@ -171,6 +174,7 @@ public class DemoResource {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
     @Path("removeassistant/{name}")
     public String removeAssistant(@PathParam("name") String assistantName){
         WashingAssistantDTO assistantResponseDTO = null;
@@ -189,5 +193,30 @@ public class DemoResource {
             } else {
                 throw new NotFoundException("Assistant could not be removed");
         }
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("addcar/{id}")
+    public String addCarToBooking(@PathParam("id") int id, String jsonString) {
+
+        JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
+
+        String registration = json.get("registration").getAsString();
+        String brand = json.get("brand").getAsString();
+        String make = json.get("make").getAsString();
+        String year = json.get("year").getAsString();
+
+        if (id != 0) {
+            try {
+                CARFACADE.addCarOntoBooking(id, registration, brand, make, year);
+            } catch (Exception e) {
+                throw new NotFoundException("id is not correct");
+            }
+        } else {
+            throw new NotFoundException("Failed to add car");
+        }
+        return "Car with registration Id: "+ registration +" has been added to the booking";
     }
 }
