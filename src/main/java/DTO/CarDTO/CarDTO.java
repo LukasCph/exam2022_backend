@@ -1,7 +1,6 @@
 package DTO.CarDTO;
 
 import DTO.BookingDTO.BookingDTO;
-import entities.Booking;
 import entities.Car;
 
 import java.util.ArrayList;

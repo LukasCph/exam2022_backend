@@ -49,4 +49,22 @@ public class AssistantFacade {
         return WashingAssistantDTO.getDTO(allAssistants);
     }
 
+    public WashingAssistantDTO newAssistant(WashingAssistantDTO washingAssistantDTO) {
+        EntityManager em = emf.createEntityManager();
+        WashingAssistant assistant = null;
+        try {
+            em.getTransaction().begin();
+            assistant = new WashingAssistant(washingAssistantDTO.getWasherName(),
+                                            washingAssistantDTO.getLanguage(),
+                                            washingAssistantDTO.getYearsOfExp(),
+                                            washingAssistantDTO.getPriceHour()
+
+                    );
+            em.persist(assistant);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+        return new WashingAssistantDTO(assistant);
+    }
 }
