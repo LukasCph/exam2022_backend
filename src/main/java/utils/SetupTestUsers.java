@@ -1,11 +1,12 @@
 package utils;
 
 
-import entities.Role;
-import entities.User;
+import entities.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.awt.print.Book;
+import java.util.Date;
 
 public class SetupTestUsers {
 
@@ -26,6 +27,11 @@ public class SetupTestUsers {
     User user = new User("user", "kode123");
     User admin = new User("admin", "kode123");
     User both = new User("user_admin", "kode123");
+    Car bil1 = new Car("AE23513","Fiat","Punto","1996");
+    Date dato1 = new Date(2014-05-30);
+    Booking book1 = new Booking(dato1,30);
+    WashingAssistant wash1 = new WashingAssistant("Morten","Dansk",4,50);
+
 
     if(admin.getUserPass().equals("test")||user.getUserPass().equals("test")||both.getUserPass().equals("test"))
       throw new UnsupportedOperationException("You have not changed the passwords");
@@ -37,6 +43,15 @@ public class SetupTestUsers {
     admin.addRole(adminRole);
     both.addRole(userRole);
     both.addRole(adminRole);
+
+    bil1.addBookings(book1);
+    book1.addWasher(wash1);
+    wash1.addBookings(book1);
+
+    em.persist(bil1);
+    em.persist(book1);
+    em.persist(wash1);
+
     em.persist(userRole);
     em.persist(adminRole);
     em.persist(user);

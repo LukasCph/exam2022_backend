@@ -57,53 +57,5 @@ public class FacadeExample {
         }
     }
 
-    public List<List<Object>> getDataFromFiveServers() throws ExecutionException, InterruptedException {
 
-        String[] hosts = {
-                "https://api.chucknorris.io/jokes/random",
-                "https://www.boredapi.com/api/activity",
-                "http://universities.hipolabs.com/search?country=Denmark",
-                "https://api.nasa.gov/planetary/apod?api_key=EqvAdUyaT8zI6j8ga19Rff2VR70NfnhLsjBHdlXc",
-                "https://catfact.ninja/fact"
-        };
-
-        ExecutorService executor = Executors.newCachedThreadPool();
-        List<Future<String>> futures = new ArrayList<>();
-        List<String> data = new ArrayList<>();
-        List<List<Object>> response = new ArrayList<>();
-
-        for (String s: hosts) {
-            Future future = executor.submit(new Parallel(s));
-            futures.add(future);
-        }
-
-        //Get the results
-        for (Future<String> future : futures) {
-            String dto = future.get();
-            data.add(dto);
-        }
-
-        List<Object> chuckJokes = new ArrayList<>();
-        chuckJokes.add(gson.fromJson(data.get(0),ChuckJokeJsonDTO.class));
-        response.add(chuckJokes);
-
-        List<Object> bored = new ArrayList<>();
-        bored.add(gson.fromJson(data.get(1), BoredJsonDTO.class));
-        response.add(bored);
-
-        // how to receive a list of object through a DTO object
-        Type listType = new TypeToken<ArrayList<UniversityJsonDTO>>(){}.getType();
-        List<Object> uni = gson.fromJson(data.get(2), listType);
-        response.add(uni);
-
-        List<Object> nasa = new ArrayList<>();
-        nasa.add(gson.fromJson(data.get(3), NasaJsonDTO.class));
-        response.add(nasa);
-
-        List<Object> catFact = new ArrayList<>();
-        catFact.add(gson.fromJson(data.get(4), CatFactJsonDTO.class));
-        response.add(catFact);
-
-        return response;
-    }
 }
