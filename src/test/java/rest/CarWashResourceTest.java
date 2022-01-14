@@ -67,6 +67,10 @@ public class CarWashResourceTest {
             //Delete existing users and roles to get a "fresh" database
             em.createQuery("delete from User").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
+            em.createQuery("delete from Booking ").executeUpdate();
+            em.createQuery("delete from Car").executeUpdate();
+            em.createQuery("delete from WashingAssistant ").executeUpdate();
+
 
             Role userRole = new Role("user");
             Role adminRole = new Role("admin");
