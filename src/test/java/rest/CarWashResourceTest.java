@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
-@Disabled
 public class CarWashResourceTest {
 
     private static final int SERVER_PORT = 7777;
@@ -31,7 +30,6 @@ public class CarWashResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
