@@ -1,28 +1,28 @@
 package rest;
 
-import entities.User;
-import entities.Role;
-
+import com.nimbusds.jose.shaded.json.JSONObject;
+import entities.*;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.http.ContentType;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import javax.json.Json;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import static org.hamcrest.Matchers.equalTo;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
-public class LoginEndpointTest {
+public class CarWashResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -30,7 +30,7 @@ public class LoginEndpointTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-    
+
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
         return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
@@ -53,7 +53,7 @@ public class LoginEndpointTest {
     public static void closeTestServer() {
         //Don't forget this, if you called its counterpart in @BeforeAll
         EMF_Creator.endREST_TestWithDB();
-        
+
         httpServer.shutdownNow();
     }
 
@@ -77,6 +77,15 @@ public class LoginEndpointTest {
             User both = new User("user_admin", "test");
             both.addRole(userRole);
             both.addRole(adminRole);
+
+            Car car1 = new Car("AA35000","Mercedes","Benz","2000");
+            Booking booking1 = new Booking("24-12-2022",30);
+            WashingAssistant assistant1 = new WashingAssistant("Karsten","Dansk",6,120);
+            user.setCar(car1);
+            booking1.setCar(car1);
+            booking1.addWasher(assistant1);
+
+            em.persist(booking1);
             em.persist(userRole);
             em.persist(adminRole);
             em.persist(user);
@@ -115,109 +124,70 @@ public class LoginEndpointTest {
     }
 
     @Test
-    public void testRestNoAuthenticationRequired() {
+    public void testBookCarWash() {
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("bookingDate","24-11-2022");
+        requestParams.put("duration",60);
+
+        login("user","test");
         given()
                 .contentType("application/json")
-                .when()
-                .get("/cw/").then()
-                .statusCode(200)
-                .body("msg", equalTo("Hello anonymous"));
+                .header("x-access-token", securityToken)
+                .body(requestParams.toJSONString())
+              .when().
+                post("/cw/book")
+              .then().statusCode(200)
+                .body("bookingDate",equalTo("24-11-2022"));
     }
 
     @Test
-    public void testRestForAdmin() {
+    public void userCannotCreateAssistant() {
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("washerName","Minnie");
+        requestParams.put("language","French");
+        requestParams.put("yearsOfExp",23);
+        requestParams.put("priceHour",120);
+
+        login("user","test");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(requestParams.toJSONString())
+                .when().
+                post("/cw/newassistant")
+                .then().statusCode(401);
+    }
+
+    @Test
+    public void adminCanCreateAssistant() {
+        JSONObject requestParams = new JSONObject();
+        requestParams.put("washerName","Minnie");
+        requestParams.put("language","French");
+        requestParams.put("yearsOfExp",23);
+        requestParams.put("priceHour",120);
+
+        login("admin","test");
+        given()
+                .contentType("application/json")
+                .header("x-access-token", securityToken)
+                .body(requestParams.toJSONString())
+                .when().
+                post("/cw/newassistant")
+                .then().statusCode(200).body("washerName",equalTo("Minnie"));
+    }
+
+    @Test
+    public void adminCanRemoveAssistant() {
+        JSONObject requestParams = new JSONObject();
         login("admin", "test");
         given()
                 .contentType("application/json")
-                .accept(ContentType.JSON)
                 .header("x-access-token", securityToken)
-                .when()
-                .get("/cw/admin").then()
-                .statusCode(200)
-                .body("msg", equalTo("Hello to (admin) User: admin"));
+                .when().
+                delete("/cw/removeassistant/Karsten")
+                .then().statusCode(200);
     }
 
-    @Test
-    public void testRestForUser() {
-        login("user", "test");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .when()
-                .get("/cw/user").then()
-                .statusCode(200)
-                .body("msg", equalTo("Hello to User: user"));
-    }
-
-    @Test
-    public void testAutorizedUserCannotAccesAdminPage() {
-        login("user", "test");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .when()
-                .get("/cw/admin").then() //Call Admin endpoint as user
-                .statusCode(401);
-    }
-
-    @Test
-    public void testAutorizedAdminCannotAccesUserPage() {
-        login("admin", "test");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .when()
-                .get("/cw/user").then() //Call User endpoint as Admin
-                .statusCode(401);
-    }
-
-    @Test
-    public void testRestForMultiRole1() {
-        login("user_admin", "test");
-        given()
-                .contentType("application/json")
-                .accept(ContentType.JSON)
-                .header("x-access-token", securityToken)
-                .when()
-                .get("/cw/admin").then()
-                .statusCode(200)
-                .body("msg", equalTo("Hello to (admin) User: user_admin"));
-    }
-
-    @Test
-    public void testRestForMultiRole2() {
-        login("user_admin", "test");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .when()
-                .get("/cw/user").then()
-                .statusCode(200)
-                .body("msg", equalTo("Hello to User: user_admin"));
-    }
-
-    @Test
-    public void userNotAuthenticated() {
-        logOut();
-        given()
-                .contentType("application/json")
-                .when()
-                .get("/cw/user").then()
-                .statusCode(403)
-                .body("code", equalTo(403))
-                .body("message", equalTo("Not authenticated - do login"));
-    }
-
-    @Test
-    public void adminNotAuthenticated() {
-        logOut();
-        given()
-                .contentType("application/json")
-                .when()
-                .get("/cw/user").then()
-                .statusCode(403)
-                .body("code", equalTo(403))
-                .body("message", equalTo("Not authenticated - do login"));
-    }
 
 }
+

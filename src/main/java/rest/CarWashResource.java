@@ -26,7 +26,7 @@ import facades.CarFacade;
 import utils.EMF_Creator;
 
 @Path("cw")
-public class DemoResource {
+public class CarWashResource {
     
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final AssistantFacade ASSISTANTFACADE = AssistantFacade.getAssistantFacade(EMF);
@@ -98,7 +98,7 @@ public class DemoResource {
         }
     }
 
-    //DOES NOT WORK AS INTENDED - MIGHT BE A WRONG RELATION - CALL FROM USER INSTEAD
+    //DOES NOT WORK AS INTENDED - MIGHT BE A WRONG RELATION - MIGHT NEED TO CALL FROM USER INSTEAD
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("mycar/{username}")
@@ -177,7 +177,6 @@ public class DemoResource {
             } catch (Exception e) {
                 throw new NotFoundException("Assistant could not be created");
             }
-
         } else {
             throw new NotFoundException("Assistant missing");
         }
