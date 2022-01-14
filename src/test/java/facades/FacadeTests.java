@@ -11,7 +11,7 @@ import utils.EMF_Creator;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-
+@Disabled
 public class FacadeTests {
 
     private static EntityManagerFactory emf;

@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
+@Disabled
 public class CarWashResourceTest {
 
     private static final int SERVER_PORT = 7777;
