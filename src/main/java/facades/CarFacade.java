@@ -2,6 +2,7 @@ package facades;
 
 import DTO.BookingDTO.BookingDTO;
 import DTO.CarDTO.CarDTO;
+import DTO.WashingAssistantDTO.WashingAssistantDTO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -60,5 +61,18 @@ public class CarFacade {
         }
         System.out.println(bookingToEdit.getWashers());
         return "Assistant: "+carToAdd+" has been added to the booking";
+    }
+
+    public CarDTO getCar(String username) {
+        EntityManager em = emf.createEntityManager();
+        Car car = null;
+        try{
+            TypedQuery<Car> tq = em.createQuery("SELECT u FROM User u WHERE User.userName=:username",Car.class);
+            tq.setParameter("username",username);
+            car = tq.getSingleResult();
+        }finally{
+            em.close();
+        }
+        return new CarDTO(car);
     }
 }

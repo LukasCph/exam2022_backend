@@ -10,7 +10,6 @@ import com.google.gson.JsonParser;
 import entities.User;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -99,6 +98,24 @@ public class DemoResource {
         }
     }
 
+    //DOES NOT WORK AS INTENDED - MIGHT BE A WRONG RELATION - CALL FROM USER INSTEAD
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("mycar/{username}")
+
+    public String fetchMyCar(@PathParam("username")String username){
+        CarDTO carDTO = null;
+        try {
+            carDTO = CARFACADE.getCar(username);
+        } catch (Exception e) {
+            throw new NotFoundException("Error finding your car");
+        }
+        if (carDTO != null ) {
+            return GSON.toJson(carDTO);
+        } else {
+            throw new NotFoundException("Error fetching all assistants");
+        }
+    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
