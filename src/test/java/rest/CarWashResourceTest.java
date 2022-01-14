@@ -31,6 +31,7 @@ public class CarWashResourceTest {
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
 
+
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
         return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
@@ -191,7 +192,5 @@ public class CarWashResourceTest {
                 delete("/cw/removeassistant/Karsten")
                 .then().statusCode(200);
     }
-
-
 }
 
